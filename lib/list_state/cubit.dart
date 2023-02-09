@@ -11,7 +11,6 @@ class CubitState extends _AppState {
   List<Object?> get props => [];
 }
 
-
 abstract class AppCubit<T> extends Cubit<T> {
   AppCubit(T initialState) : super(initialState);
 

@@ -5,20 +5,19 @@ import 'package:cubit_avadhesh/ui/list/list_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
+class MyStatefulWidget1 extends StatefulWidget {
+  const MyStatefulWidget1({Key? key}) : super(key: key);
 
 
   @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  State<MyStatefulWidget1> createState() => _MyStatefulWidgetState();
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+class _MyStatefulWidgetState extends State<MyStatefulWidget1> {
   @override
   void intiState() {
     super.initState();
-    print('2');
-
+    print('1');
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final cubit = context.read<ListCubit>();
       cubit.fetchDataList();

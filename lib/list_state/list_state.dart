@@ -4,16 +4,16 @@ import 'package:cubit_avadhesh/model/data.dart';
 
 abstract class ListState extends CubitState{}
 
-class InitTodoState extends ListState{}
+class InitTodoState extends CubitState{}
 
-class LoadingTodoState extends ListState{}
+class LoadingTodoState extends CubitState{}
 
-class ErrorTodoState extends ListState{
+class ErrorTodoState extends CubitState{
   final String error;
   ErrorTodoState(this.error);
 }
 
-class ResponseTodoState extends ListState{
+class ResponseTodoState extends CubitState{
 
   final List<Data> data;
   ResponseTodoState(this.data);
