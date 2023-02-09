@@ -17,7 +17,7 @@ class _PlatformChannelState extends State<PlatformChannel> {
   MethodChannel('samples.flutter.io/contact');
   String _batteryLevel = 'Battery level: unknown.';
   String _chargingStatus = 'Battery status: unknown.';
-  String _contact = 'Contact : unknown.';
+  List<dynamic>  _contact = [];
 
   Future<void> _getBatteryLevel() async {
     _getContact();
@@ -39,19 +39,14 @@ class _PlatformChannelState extends State<PlatformChannel> {
 
 
   Future<void> _getContact() async {
-    String batteryLevel;
     try {
-      final int? result = await methodChannelContact.invokeMethod('getContact');
-      batteryLevel = 'Contact size: $result%.';
+      _contact = await methodChannelContact.invokeMethod('getContact');
+
     } on PlatformException catch (e) {
-      if (e.code == 'NO_Contact') {
-        batteryLevel = 'No Contact.';
-      } else {
-        batteryLevel = 'Failed to get Contact .';
-      }
+      print('none');
     }
     setState(() {
-      _contact = batteryLevel;
+      _contact = _contact;
     });
   }
 
@@ -78,24 +73,41 @@ class _PlatformChannelState extends State<PlatformChannel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Battery level '),),
-      body: Column(
-        children: <Widget>[
-          Text(_batteryLevel, key: const Key('Battery level label')),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Text(_batteryLevel, key: const Key('Battery level label')),
 
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(_contact, key: const Key('Contact label')),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: _getBatteryLevel,
-              child: const Text('Refresh'),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(_contact.length.toString(), key: const Key('Contact label')),
             ),
-          ),
-          Text(_chargingStatus),
-        ],
+            ListView.builder(
+              shrinkWrap: true,
+                itemCount: _contact.length ,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
+                    color: Colors.blue.shade100,
+                    child:  Center(
+                      child: Text(
+                        _contact[index].toString(),
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                    ),
+                  );
+                }),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: _getBatteryLevel,
+                child: const Text('Refresh'),
+              ),
+            ),
+            Text(_chargingStatus),
+          ],
+        ),
       ),
     );
   }

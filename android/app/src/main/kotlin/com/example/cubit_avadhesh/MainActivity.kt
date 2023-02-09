@@ -97,7 +97,7 @@ class MainActivity : FlutterActivity() {
                     } else {
                         val batteryLevel = getContactNumbers();
                         if (batteryLevel.isNotEmpty()) {
-                            result.success(batteryLevel.size)
+                            result.success(batteryLevel)
                         } else {
                             result.error("UNAVAILABLE", "Contact not available.", null)
                         }
@@ -105,7 +105,7 @@ class MainActivity : FlutterActivity() {
                 } else {
                     val batteryLevel = getContactNumbers();
                     if (batteryLevel.isNotEmpty()) {
-                        result.success(batteryLevel.size)
+                        result.success(batteryLevel)
                     } else {
                         result.error("UNAVAILABLE", "Contact not available.", null)
                     }
@@ -133,8 +133,9 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private  fun getContactNumbers(): HashMap<String, ArrayList<String>> {
-        val contactsNumberMap = HashMap<String, ArrayList<String>>()
+    private  fun getContactNumbers(): ArrayList<String> {
+        val contactsNumberMap = ArrayList<String>()
+
         val phoneCursor: Cursor? = context.contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
             null,
@@ -146,13 +147,10 @@ class MainActivity : FlutterActivity() {
             val contactIdIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
             val numberIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
             while (phoneCursor.moveToNext()) {
-                val contactId = phoneCursor.getString(contactIdIndex)
                 val number: String = phoneCursor.getString(numberIndex)
                 //check if the map contains key or not, if not then create a new array list with number
-                if (contactsNumberMap.containsKey(contactId)) {
-                    contactsNumberMap[contactId]?.add(number)
-                } else {
-                    contactsNumberMap[contactId] = arrayListOf(number)
+                if (!contactsNumberMap.contains(number)) {
+                    contactsNumberMap.add(number);
                 }
             }
             //contact contains all the number of a particular contact
