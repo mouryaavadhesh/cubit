@@ -13,14 +13,11 @@ class _PlatformChannelState extends State<PlatformChannel> {
   MethodChannel('samples.flutter.io/battery');
   static const EventChannel eventChannel =
   EventChannel('samples.flutter.io/charging');
-  static const MethodChannel methodChannelContact =
-  MethodChannel('samples.flutter.io/contact');
   String _batteryLevel = 'Battery level: unknown.';
   String _chargingStatus = 'Battery status: unknown.';
-  List<dynamic>  _contact = [];
+
 
   Future<void> _getBatteryLevel() async {
-    _getContact();
     String batteryLevel;
     try {
       final int? result = await methodChannel.invokeMethod('getBatteryLevel');
@@ -38,17 +35,7 @@ class _PlatformChannelState extends State<PlatformChannel> {
   }
 
 
-  Future<void> _getContact() async {
-    try {
-      _contact = await methodChannelContact.invokeMethod('getContact');
 
-    } on PlatformException catch (e) {
-      print('none');
-    }
-    setState(() {
-      _contact = _contact;
-    });
-  }
 
   @override
   void initState() {
@@ -78,26 +65,7 @@ class _PlatformChannelState extends State<PlatformChannel> {
           children: <Widget>[
             Text(_batteryLevel, key: const Key('Battery level label')),
 
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(_contact.length.toString(), key: const Key('Contact label')),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-                itemCount: _contact.length ,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: const EdgeInsets.all(10.0),
-                    padding: const EdgeInsets.all(10.0),
-                    color: Colors.blue.shade100,
-                    child:  Center(
-                      child: Text(
-                        _contact[index].toString(),
-                        style: const TextStyle(fontSize: 10),
-                      ),
-                    ),
-                  );
-                }),
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(

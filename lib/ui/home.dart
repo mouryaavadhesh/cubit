@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       body: _children[_currentIndex],
-      bottomNavigationBar: Tabbar( screens: const [PlatformChannel(),MyStatefulWidget1()]),
+      bottomNavigationBar: Tabbar( screens: const [MyStatefulWidget(),MyStatefulWidget1()]),
     );
   }
 

@@ -3,30 +3,37 @@
 // found in the LICENSE file.
 package com.example.cubit_avadhesh
 
-import android.Manifest
-import android.R
-import android.app.AlertDialog
+
+import android.R.attr.bitmap
 import android.content.*
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.BatteryManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.provider.ContactsContract
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContextCompat
+import android.util.Base64
+import android.util.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.MethodChannel
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.nio.ByteBuffer
 
 
 class MainActivity : FlutterActivity() {
     private val BATTERY_CHANNEL = "samples.flutter.io/battery"
     private val CHARGING_CHANNEL = "samples.flutter.io/charging"
     private val CONTACT_CHANNEL = "samples.flutter.io/contact"
+    private val TAG = "PermissionDemo"
+    private var resolver: ContentResolver? = null
+
+
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         EventChannel(flutterEngine.dartExecutor, CHARGING_CHANNEL).setStreamHandler(
@@ -61,61 +68,28 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
+        contactChannel();
+    }
+
+    private fun contactChannel() {
         MethodChannel(
-            flutterEngine.dartExecutor,
+            flutterEngine!!.dartExecutor,
             CONTACT_CHANNEL
         ).setMethodCallHandler { call, result ->
-
             if (call.method == "getContact") {
-                if (VERSION.SDK_INT >= VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.READ_CONTACTS
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                                this,
-                                Manifest.permission.READ_CONTACTS
-                            )
-                        ) {
-                            val builder = AlertDialog.Builder(this)
-                            builder.setTitle("Read Contacts permission")
-                            builder.setPositiveButton(R.string.ok, null)
-                            builder.setMessage("Please enable access to contacts.")
-                            builder.setOnDismissListener {
-                                requestPermissions(
-                                    arrayOf<String>(Manifest.permission.READ_CONTACTS),200
-                                )
-                            }
-                            builder.show()
-                        } else {
-                            requestPermissions(
-                                this, arrayOf<String>(Manifest.permission.READ_CONTACTS),
-                                200
-                            )
-                        }
-                    } else {
-                        val batteryLevel = getContactNumbers();
-                        if (batteryLevel.isNotEmpty()) {
-                            result.success(batteryLevel)
-                        } else {
-                            result.error("UNAVAILABLE", "Contact not available.", null)
-                        }
-                    }
+                val batteryLevel = getContactNumbers();
+                if (batteryLevel.isNotEmpty()) {
+                    result.success(batteryLevel)
                 } else {
-                    val batteryLevel = getContactNumbers();
-                    if (batteryLevel.isNotEmpty()) {
-                        result.success(batteryLevel)
-                    } else {
-                        result.error("UNAVAILABLE", "Contact not available.", null)
-                    }
+                    result.error("UNAVAILABLE", "Contact not available.", null)
                 }
-
 
             } else {
                 result.notImplemented()
             }
         }
+
+
     }
 
     private fun createChargingStateChangeReceiver(events: EventSink): BroadcastReceiver? {
@@ -133,8 +107,9 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private  fun getContactNumbers(): ArrayList<String> {
-        val contactsNumberMap = ArrayList<String>()
+    private fun getContactNumbers(): ArrayList< HashMap<Any, Any>> {
+        val contactsNumberMap = ArrayList< HashMap<Any, Any>>()
+
 
         val phoneCursor: Cursor? = context.contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -144,13 +119,53 @@ class MainActivity : FlutterActivity() {
             null
         )
         if (phoneCursor != null && phoneCursor.count > 0) {
-            val contactIdIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
-            val numberIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            val numberIndex =
+                phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            val nameIndex =
+                phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+            val photoIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
             while (phoneCursor.moveToNext()) {
                 val number: String = phoneCursor.getString(numberIndex)
+                val name: String = phoneCursor.getString(nameIndex)
+                val uri: Long = phoneCursor.getLong(photoIndex)
                 //check if the map contains key or not, if not then create a new array list with number
-                if (!contactsNumberMap.contains(number)) {
-                    contactsNumberMap.add(number);
+
+                val hashMap : HashMap<Any, Any>
+                        = HashMap()
+                hashMap["name"]=name
+                hashMap["phones"]=number
+                var byteArray:ByteArray= byteArrayOf()
+                var photo: Bitmap? = null
+
+                try {
+                    val inputStream = ContactsContract.Contacts.openContactPhotoInputStream(
+                        contentResolver,
+                        ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, uri)
+                    )
+                    if (inputStream != null) {
+                        photo = BitmapFactory.decodeStream(inputStream)
+                        val baos = ByteArrayOutputStream()
+                        photo.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+
+                        val byteArray = baos.toByteArray()
+
+                        for(item in byteArray )
+                        {
+                            println(item)
+                        }
+                        hashMap["photo"] =  byteArray
+                        println("ByteArray-photo_stream")
+
+                    }
+                    assert(inputStream != null)
+                    inputStream!!.close()
+
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                if (!contactsNumberMap.contains(hashMap)) {
+                    contactsNumberMap.add(hashMap);
                 }
             }
             //contact contains all the number of a particular contact
@@ -158,6 +173,8 @@ class MainActivity : FlutterActivity() {
         }
         return contactsNumberMap
     }
+
+
     private fun getBatteryLevel(): Int {
         return if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val batteryManager = getSystemService(BATTERY_SERVICE) as BatteryManager
@@ -171,4 +188,58 @@ class MainActivity : FlutterActivity() {
                     intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
         }
     }
+
+    //Retrieve photo (this method gets a large photo, for thumbnail follow the link below)
+    private fun retrieveContactPhoto(contactID:Long):ByteArray {
+        var photo: Bitmap? = null
+        var byteArray:ByteArray= byteArrayOf()
+        try {
+            val inputStream = ContactsContract.Contacts.openContactPhotoInputStream(
+                contentResolver,
+                ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactID)
+            )
+            if (inputStream != null) {
+                photo = BitmapFactory.decodeStream(inputStream)
+                val baos = ByteArrayOutputStream()
+                 photo.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+
+                val byteArray = baos.toByteArray()
+
+                for(item in byteArray )
+                {
+                    println(item)
+                }
+
+                println("ByteArray-photo_stream")
+
+            }
+            assert(inputStream != null)
+            inputStream!!.close()
+            return  byteArray
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+
+        return  byteArray
+
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            200 -> {
+
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d(TAG, "Permission has been denied by user")
+                } else {
+                    contactChannel()
+                }
+            }
+        }
+    }
+
 }
