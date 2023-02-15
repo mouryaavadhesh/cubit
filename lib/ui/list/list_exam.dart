@@ -54,7 +54,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                                 contact[index].name!,
                                 style: const TextStyle(fontSize: 10),
                               ),
-                            Image.memory(Uint8List.fromList(contact[index].photo!))
+                              contact[index].photo!.isNotEmpty? Image.memory(Uint8List.fromList(contact[index].photo!)):const Icon(Icons.ice_skating,size: 50,color: Colors.red,)
                             ],
                           ),
                         );

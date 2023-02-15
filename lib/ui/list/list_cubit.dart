@@ -24,8 +24,6 @@ class ListCubit extends Cubit<CubitState> {
         .invokeMethod('getContact')
         .then((value) {
       dynamic list = value;
-      print("ByteArrayOutputStream ${jsonEncode(list)}");
-
       var data = json.decode(jsonEncode(list));
       var rest = data as List;
 

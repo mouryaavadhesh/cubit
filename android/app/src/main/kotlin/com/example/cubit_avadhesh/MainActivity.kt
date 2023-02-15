@@ -34,7 +34,6 @@ class MainActivity : FlutterActivity() {
     private var resolver: ContentResolver? = null
 
 
-
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         EventChannel(flutterEngine.dartExecutor, CHARGING_CHANNEL).setStreamHandler(
             object : EventChannel.StreamHandler {
@@ -107,8 +106,8 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun getContactNumbers(): ArrayList< HashMap<Any, Any>> {
-        val contactsNumberMap = ArrayList< HashMap<Any, Any>>()
+    private fun getContactNumbers(): ArrayList<HashMap<Any, Any>> {
+        val contactsNumberMap = ArrayList<HashMap<Any, Any>>()
 
 
         val phoneCursor: Cursor? = context.contentResolver.query(
@@ -123,42 +122,44 @@ class MainActivity : FlutterActivity() {
                 phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
             val nameIndex =
                 phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-            val photoIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
+            val contactIndex =
+                phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
+            val photoIndex =
+                phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
+
             while (phoneCursor.moveToNext()) {
                 val number: String = phoneCursor.getString(numberIndex)
                 val name: String = phoneCursor.getString(nameIndex)
-                val uri: Long = phoneCursor.getLong(photoIndex)
-                //check if the map contains key or not, if not then create a new array list with number
+                val contactID: Long = phoneCursor.getLong(contactIndex)
 
-                val hashMap : HashMap<Any, Any>
-                        = HashMap()
-                hashMap["name"]=name
-                hashMap["phones"]=number
-                var byteArray:ByteArray= byteArrayOf()
+                val hashMap: HashMap<Any, Any> = HashMap()
+                hashMap["name"] = name
+                hashMap["phones"] = number
                 var photo: Bitmap? = null
-
                 try {
-                    val inputStream = ContactsContract.Contacts.openContactPhotoInputStream(
-                        contentResolver,
-                        ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, uri)
-                    )
-                    if (inputStream != null) {
-                        photo = BitmapFactory.decodeStream(inputStream)
-                        val baos = ByteArrayOutputStream()
-                        photo.compress(Bitmap.CompressFormat.JPEG, 80, baos)
 
-                        val byteArray = baos.toByteArray()
+                       if(phoneCursor.getString(photoIndex)!=null) {
+                           val inputStream = ContactsContract.Contacts.openContactPhotoInputStream(
+                               contentResolver,
+                               ContentUris.withAppendedId(
+                                   ContactsContract.Contacts.CONTENT_URI,
+                                   contactID
+                               )
+                           )
+                           if (inputStream != null) {
+                               photo = BitmapFactory.decodeStream(inputStream)
+                               val outputStream = ByteArrayOutputStream()
+                               photo.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+                               val byteArray = outputStream.toByteArray()
+                           }
+                           assert(inputStream != null)
+                           inputStream!!.close()
+                       }else {
+                           val outputStream = ByteArrayOutputStream()
+                           val byteArray = outputStream.toByteArray()
+                           hashMap["photo"] = byteArray
+                       }
 
-                        for(item in byteArray )
-                        {
-                            println(item)
-                        }
-                        hashMap["photo"] =  byteArray
-                        println("ByteArray-photo_stream")
-
-                    }
-                    assert(inputStream != null)
-                    inputStream!!.close()
 
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -190,41 +191,7 @@ class MainActivity : FlutterActivity() {
     }
 
     //Retrieve photo (this method gets a large photo, for thumbnail follow the link below)
-    private fun retrieveContactPhoto(contactID:Long):ByteArray {
-        var photo: Bitmap? = null
-        var byteArray:ByteArray= byteArrayOf()
-        try {
-            val inputStream = ContactsContract.Contacts.openContactPhotoInputStream(
-                contentResolver,
-                ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactID)
-            )
-            if (inputStream != null) {
-                photo = BitmapFactory.decodeStream(inputStream)
-                val baos = ByteArrayOutputStream()
-                 photo.compress(Bitmap.CompressFormat.JPEG, 80, baos)
 
-                val byteArray = baos.toByteArray()
-
-                for(item in byteArray )
-                {
-                    println(item)
-                }
-
-                println("ByteArray-photo_stream")
-
-            }
-            assert(inputStream != null)
-            inputStream!!.close()
-            return  byteArray
-
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-
-        return  byteArray
-
-    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>, grantResults: IntArray

@@ -3,7 +3,7 @@ class ContactsModel {
   String? phones;
   List<int>? photo;
 
-  ContactsModel({this.name, this.phones,this.photo});
+  ContactsModel({this.name, this.phones});
 
   ContactsModel.fromJson(Map<String, dynamic> json) {
     phones = json['phones'];
