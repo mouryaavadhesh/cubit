@@ -1,6 +1,6 @@
-import 'package:cubit_avadhesh/list_state/cubit.dart';
-import 'package:cubit_avadhesh/list_state/list_state.dart';
-import 'package:cubit_avadhesh/ui/list/list_cubit1.dart';
+import 'package:cubit_avadhesh/cubit/list_state/cubit.dart';
+import 'package:cubit_avadhesh/cubit/list_state/list_state.dart';
+import 'package:cubit_avadhesh/cubit/ui/list/list_cubit1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

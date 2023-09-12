@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:cubit_avadhesh/base/enum_data_state.dart';
-import 'package:cubit_avadhesh/repo/repo_response.dart';
+import 'package:cubit_avadhesh/cubit/base/enum_data_state.dart';
+import 'package:cubit_avadhesh/cubit/repo/repo_response.dart';
 
 extension ExtFuture<S> on Future<RepoResponse<S>> {
   Future<R> thenListenData<R>(

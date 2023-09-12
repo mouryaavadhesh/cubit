@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:cubit_avadhesh/list_state/cubit.dart';
-import 'package:cubit_avadhesh/list_state/list_state.dart';
-import 'package:cubit_avadhesh/ui/list/list_cubit.dart';
+import 'package:cubit_avadhesh/cubit/list_state/cubit.dart';
+import 'package:cubit_avadhesh/cubit/list_state/list_state.dart';
+import 'package:cubit_avadhesh/cubit/ui/list/list_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,6 +66,26 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+  Widget continueButton(BuildContext context, {required Function() callback}) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 5),
+      height: 48,
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
+            backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                  return Colors.green;
+                })),
+        onPressed:()=>  callback,
+        child: const Text(
+          "Callback",
         ),
       ),
     );

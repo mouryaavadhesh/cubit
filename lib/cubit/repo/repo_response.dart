@@ -1,5 +1,5 @@
 
-import 'package:cubit_avadhesh/base/enum_data_state.dart';
+import 'package:cubit_avadhesh/cubit/base/enum_data_state.dart';
 
 abstract class ConditionalResponse<F, S> {
   F? f;

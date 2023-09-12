@@ -1,6 +1,5 @@
-import 'package:cubit_avadhesh/ui/home.dart';
-import 'package:cubit_avadhesh/ui/list/list_exam.dart';
-import 'package:cubit_avadhesh/ui/tabBar.dart';
+
+import 'package:cubit_avadhesh/bloc/app.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,7 +27,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home:  Home(),
+      home:  CounterApp(),
     );
   }
 }

@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:cubit_avadhesh/list_state/cubit.dart';
-import 'package:cubit_avadhesh/list_state/list_state.dart';
-import 'package:cubit_avadhesh/model/contacts_model.dart';
+import 'package:cubit_avadhesh/cubit/list_state/cubit.dart';
+import 'package:cubit_avadhesh/cubit/list_state/list_state.dart';
+import 'package:cubit_avadhesh/cubit/model/contacts_model.dart';
 import 'package:flutter/services.dart';
 
 class ListCubit extends Cubit<CubitState> {
+
+  static String ava="avadhesh";
+   String ava1="avadhesh";
+
   static const MethodChannel methodChannelContact =
       MethodChannel('samples.flutter.io/contact');
 

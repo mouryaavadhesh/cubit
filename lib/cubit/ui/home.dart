@@ -1,8 +1,8 @@
-import 'package:cubit_avadhesh/ui/list/list_exam.dart';
-import 'package:cubit_avadhesh/ui/list/list_exam1.dart';
-import 'package:cubit_avadhesh/ui/main.dart';
-import 'package:cubit_avadhesh/ui/plat.dart';
-import 'package:cubit_avadhesh/ui/tabBar.dart';
+import 'package:cubit_avadhesh/bloc/ui/counter_page.dart';
+import 'package:cubit_avadhesh/cubit/ui/list/list_exam.dart';
+import 'package:cubit_avadhesh/cubit/ui/list/list_exam1.dart';
+import 'package:cubit_avadhesh/cubit/ui/plat.dart';
+import 'package:cubit_avadhesh/cubit/ui/tabBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -21,8 +21,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _children = [
-      const MyStatefulWidget(),
-      const MyStatefulWidget()
+      MyStatefulWidget(),
+      MyStatefulWidget()
     ];
     super.initState();
   }
@@ -42,21 +42,5 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
-  Column buildButtonColumn(IconData icon) {
-    Color color = Theme.of(context).primaryColor;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: color),
-      ],
-    );
-  }
 }

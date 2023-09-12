@@ -2,10 +2,10 @@
 
 import 'dart:convert';
 
-import 'package:cubit_avadhesh/services/api.dart';
-import 'package:cubit_avadhesh/base/enum_data_state.dart';
-import 'package:cubit_avadhesh/repo/repo_response.dart';
-import 'package:cubit_avadhesh/model/data.dart';
+import 'package:cubit_avadhesh/cubit/services/api.dart';
+import 'package:cubit_avadhesh/cubit/base/enum_data_state.dart';
+import 'package:cubit_avadhesh/cubit/repo/repo_response.dart';
+import 'package:cubit_avadhesh/cubit/model/data.dart';
 
 class ListRepo extends Api{
   

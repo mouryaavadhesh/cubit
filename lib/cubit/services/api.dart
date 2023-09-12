@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:cubit_avadhesh/model/data.dart';
+import 'package:cubit_avadhesh/cubit/model/data.dart';
 import 'package:http/http.dart';
 
 class Api {
