@@ -21,8 +21,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _children = [
-      MyStatefulWidget(),
-      MyStatefulWidget()
+      const MyStatefulWidget(),
+      const MyStatefulWidget()
     ];
     super.initState();
   }
