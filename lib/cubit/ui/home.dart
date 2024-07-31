@@ -32,10 +32,6 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('MyApp.appName'),
-        // titleTextStyle: Theme.of(context).textTheme.apply(
-        //   bodyColor: Colors.black,
-        //   displayColor: Colors.blue,
-        // ),
       ),
       body: _children[_currentIndex],
       bottomNavigationBar: Tabbar( screens: const [MyStatefulWidget(),MyStatefulWidget1()]),
